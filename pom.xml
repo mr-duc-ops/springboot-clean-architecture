@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 
+         https://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <!-- 
+        Spring Boot Parent manages:
+        - Spring Framework version
+        - dependency versions
+        - plugin versions
+        - BOM alignment
+        
+        Using Spring Boot 4.0.6:
+        - Built on Spring Framework 7
+        - Jakarta EE 11
+        - Servlet 6.1 baseline
+        - Java 17+
+    -->
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>4.0.6</version>
+        <relativePath/>
+    </parent>
+
+    <groupId>com.cleanarch</groupId>
+    <artifactId>cleanarch-from-mr_duc</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+
+    <name>cleanarch-from-mr_duc</name>
+    <description>Spring Boot Clean Architecture Project</description>
+
+    <properties>
+        <!--
+            Java 17 = minimum supported by Spring Boot 4
+            Java 21 = recommended LTS for production
+            Java 25 = latest performance/features but ecosystem still catching up
+
+            For interview/demo:
+            Java 17 is completely fine
+        -->
+        <java.version>17</java.version>
+
+        <!-- Explicit version because Springdoc 2.x breaks with Boot 4 -->
+        <springdoc.version>3.0.3</springdoc.version>
+
+        <!-- Latest stable version supporting Java 25 -->
+        <jacoco.version>0.8.14</jacoco.version>
+
+        <!-- Compatible with Spring Boot 4 + JDK 25/26 -->
+        <lombok.version>1.18.46</lombok.version>
+    </properties>
+
+    <dependencies>
+
+        <!--
+            Production monitoring:
+            health check, metrics, readiness/liveness probes
+            useful for Kubernetes/production deployment
+        -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+
+        <!--
+            Spring Data JDBC:
+            lightweight alternative to JPA/Hibernate
+            
+            Why choose JDBC:
+            - simpler SQL control
+            - better fit for clean architecture
+            - avoids ORM complexity
+            - easier debugging
+        -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jdbc</artifactId>
+        </dependency>
+
+        <!--
+            REST APIs
+            Embedded Tomcat 11
+            Spring MVC
+            JSON serialization
+        -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+
+        <!--
+            Development only:
+            auto restart when code changes
+        -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-devtools</artifactId>
+            <scope>runtime</scope>
+            <optional>true</optional>
+        </dependency>
+
+        <!--
+            In-memory database for local development/testing
+        -->
+        <!-- H2 Engine: Use for connecting to the database -->
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+
+        <!-- H2 Console Starter: Use for rendering web interface -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-h2console</artifactId>
+        </dependency>
+
+        <!--
+            Reduce Java boilerplate:
+            getter/setter/builder/constructor
+            
+            Marked as provided:
+            needed only at compile time
+        -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>${lombok.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!--
+            Swagger/OpenAPI documentation
+            
+            Springdoc 2.x incompatible with Spring Boot 4
+            Must use 3.x
+        -->
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+            <version>${springdoc.version}</version>
+        </dependency>
+
+        <!--
+            Includes:
+            - JUnit Jupiter 6
+            - Mockito
+            - AssertJ
+            - Spring Test
+            - MockMvc
+        -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+    </dependencies>
+
+    <build>
+        <plugins>
+
+            <!--
+                Code coverage reporting
+            -->
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>${jacoco.version}</version>
+
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+
+                    <execution>
+                        <id>report</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!--
+                Build executable jar
+            -->
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+
+                <configuration>
+                    <excludes>
+                        <exclude>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                        </exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
+
+        </plugins>
+    </build>
+
+</project>

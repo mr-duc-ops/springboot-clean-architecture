@@ -1,0 +1,11 @@
+target
+.git
+.gitignore
+README.md
+Dockerfile
+.dockerignore
+src/test
+*.h2.db
+*.mv.db
+*.trace.db
+*.md
